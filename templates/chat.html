@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}聊天室 - 南桥小区402寻人站{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div class="site-title-big">南桥小区402 聊天室</div>
+  <div class="site-subtitle">在线成员：{{ characters|length }} 人 &nbsp;|&nbsp; 访客（未命名）已进入聊天室</div>
+  <hr class="header-hr">
+</div>
+
+<!-- QQ-style chat window -->
+<div class="qq-window">
+
+  <!-- QQ title bar -->
+  <div class="qq-titlebar">
+    <span class="qq-title-text">南桥小区402 - 群聊（{{ characters|length + 1 }}人在线）</span>
+    <span class="qq-window-btns">
+      <span class="qq-btn">─</span>
+      <span class="qq-btn">□</span>
+      <span class="qq-btn qq-close">✕</span>
+    </span>
+  </div>
+
+  <!-- Chat body: user list + message area -->
+  <div class="qq-body">
+
+    <!-- Left: user list -->
+    <div class="qq-userlist">
+      <div class="qq-userlist-title">在线成员 ({{ characters|length + 1 }})</div>
+      {% for char_id, char in characters.items() %}
+      <div class="qq-user-item {% if loop.first %}qq-user-selected{% endif %}"
+           data-char-id="{{ char_id }}"
+           onclick="selectCharacter('{{ char_id }}', this)">
+        <span class="qq-status-dot status-{{ char.status_icon }}"></span>
+        <span class="qq-username">{{ char.display_name }}</span>
+      </div>
+      {% endfor %}
+      <hr class="qq-hr">
+      <div class="qq-user-item qq-user-self">
+        <span class="qq-status-dot status-online"></span>
+        <span class="qq-username">未命名访客（我）</span>
+      </div>
+    </div>
+
+    <!-- Right: messages -->
+    <div class="qq-chat-area">
+      <div class="qq-messages" id="chat-messages">
+        <!-- System welcome -->
+        <div class="qq-msg sys-msg">
+          <span class="sys-msg-text">
+            [系统消息] 欢迎进入南桥小区402聊天室。当前访客未命名。提示：本聊天室对话内容将被记录。
+          </span>
+        </div>
+        <div class="qq-msg sys-msg">
+          <span class="sys-msg-text">
+            [系统消息] 正在与：<span id="current-char-name">小满不在家</span> 对话
+          </span>
+        </div>
+      </div>
+
+      <!-- Input area -->
+      <div class="qq-input-area">
+        <div class="qq-toolbar">
+          <span class="qq-tool-btn" title="表情">😶</span>
+          <span class="qq-tool-btn" title="图片">🖼</span>
+          <span class="qq-tool-btn" title="截图">✂</span>
+          <span class="qq-char-indicator">
+            当前：<span id="chat-target-display">小满不在家</span>
+          </span>
+        </div>
+        <textarea
+          id="chat-input"
+          class="qq-textarea"
+          placeholder="输入消息，按 Enter 发送（Shift+Enter 换行）"
+          rows="3"
+        ></textarea>
+        <div class="qq-send-row">
+          <span class="qq-hint">按 Enter 发送</span>
+          <button class="qq-send-btn" onclick="sendMessage()" id="send-btn">发 送(S)</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Character info box below chat -->
+<div class="char-info-box" id="char-info-box">
+  <div class="section-title">【当前对话对象】</div>
+  <div id="char-info-content">
+    <strong>小满不在家</strong><br>
+    本站站长账号。<br>
+    个人签名：<i>（无）</i><br>
+    注册时间：2001-08-14<br>
+    状态：<span class="blink-text">离线</span>
+  </div>
+</div>
+
+<div class="sys-notice" style="margin-top:8px;">
+  <span class="sys-label">[提示]</span>
+  可以问任何问题：顾小满的事、402房间、1997年那晚、19:20规则……
+  <br>
+  <span class="sys-small warn-text">警告：不要在聊天中透露你的真实姓名。</span>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script>
+  const CHARACTERS = {{ characters | tojson }};
+</script>
+{% endblock %}

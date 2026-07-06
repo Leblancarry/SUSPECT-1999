@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}证据档案 - 南桥小区402寻人站{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div class="site-title-big">证据档案</div>
+  <div class="site-subtitle">收集顾小满存在过的证明 &nbsp;|&nbsp; 共 {{ evidence|length }} 条档案</div>
+  <hr class="header-hr">
+</div>
+
+<div class="marquee-bar">
+  <marquee behavior="scroll" direction="left" scrollamount="2">
+    档案需要通过调查获取 &nbsp;★&nbsp; 与知情者对话可能发现新线索 &nbsp;★&nbsp; 部分档案隐藏在其他页面中 &nbsp;★&nbsp;
+  </marquee>
+</div>
+
+<div class="sys-notice" style="margin-bottom:8px;">
+  <span class="sys-label">[档案室]</span>
+  已发现：<span id="collected-count">{{ collected|length }}</span> / {{ evidence|length - 1 }} 条
+  &nbsp;|&nbsp; 档案状态：<span id="archive-status">{% if collected|length >= 11 %}调查完成{% elif collected|length >= 5 %}深入调查中{% else %}调查中{% endif %}</span>
+</div>
+
+<table class="evidence-grid" cellpadding="6" cellspacing="4" border="1" width="100%">
+  <tr>
+    <td class="evidence-grid-header">编号</td>
+    <td class="evidence-grid-header">档案名称</td>
+    <td class="evidence-grid-header">状态</td>
+    <td class="evidence-grid-header">操作</td>
+  </tr>
+
+  {% for item in evidence %}
+  {% set is_collected = item.id in collected %}
+  <tr class="evidence-row {% if not is_collected %}evidence-unknown{% endif %} {% if item.locked and not is_collected %}evidence-locked{% endif %}"
+      id="evidence-row-{{ item.id }}">
+
+    <td class="evidence-id">{{ item.id }}</td>
+
+    <td class="evidence-name">
+      {% if is_collected %}
+        {{ item.name }}
+      {% elif item.locked %}
+        <span style="color:#aaa">🔒 ???</span>
+      {% else %}
+        <span style="color:#aaa">???</span>
+      {% endif %}
+    </td>
+
+    <td class="evidence-status" id="status-{{ item.id }}">
+      {% if is_collected %}
+        <span class="status-collected">已收集 ✓</span>
+      {% elif item.locked %}
+        <span class="status-locked">已锁定</span>
+      {% else %}
+        <span class="status-unknown">未发现</span>
+      {% endif %}
+    </td>
+
+    <td class="evidence-action">
+      {% if is_collected %}
+        {% if item.id == 'E12' %}
+          <a href="/ending" class="win98-btn" style="color:#880000; font-weight:bold;">▶ 播放回放</a>
+        {% else %}
+          <button class="win98-btn" onclick="viewEvidence('{{ item.id }}')">查看档案</button>
+        {% endif %}
+      {% elif item.locked %}
+        <button class="win98-btn" disabled>【锁定】</button>
+      {% else %}
+        <button class="win98-btn" disabled style="color:#bbb" title="{{ hints.get(item.id, '') }}">【未知】</button>
+      {% endif %}
+    </td>
+
+  </tr>
+  {% endfor %}
+</table>
+
+<!-- Evidence detail modal -->
+<div id="evidence-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-window">
+    <div class="modal-titlebar">
+      <span id="modal-title">档案详情</span>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-evidence-id" id="modal-eid"></div>
+      <div class="modal-evidence-name" id="modal-ename"></div>
+      <hr style="border:1px dashed #999; margin:6px 0;">
+      <!-- 证据图片（如果有） -->
+      <div id="modal-img-wrap" style="display:none; margin-bottom:8px;">
+        <img id="modal-img" src="" alt="" class="modal-evidence-img">
+      </div>
+      <div class="modal-evidence-desc" id="modal-edesc"></div>
+      <hr style="border:1px dashed #999; margin:6px 0;">
+      <div class="modal-evidence-detail" id="modal-edetail"></div>
+      <div class="modal-footer">
+        <button class="win98-btn" onclick="closeModal()">关闭档案</button>
+        <span class="modal-stamp">[ 档案已归档 ]</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Unlock notification -->
+<div id="unlock-notify" class="unlock-notify" style="display:none;">
+  <span id="unlock-notify-text"></span>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const EVIDENCE_DATA = {{ evidence | tojson }};
+const EVIDENCE_IMAGES = {{ images | tojson }};
+const COLLECTED = new Set({{ collected | tojson }});
+
+function viewEvidence(evidenceId) {
+  const item = EVIDENCE_DATA.find(e => e.id === evidenceId);
+  if (!item || !COLLECTED.has(evidenceId)) return;
+
+  document.getElementById('modal-eid').textContent = item.id;
+  document.getElementById('modal-ename').textContent = item.name;
+  document.getElementById('modal-edesc').textContent = item.description;
+  document.getElementById('modal-edetail').textContent = item.detail;
+  document.getElementById('modal-title').textContent = '档案详情 — ' + item.id;
+
+  // 显示图片（如果有）
+  const imgFile = EVIDENCE_IMAGES[evidenceId];
+  const imgWrap = document.getElementById('modal-img-wrap');
+  const imgEl = document.getElementById('modal-img');
+  if (imgFile) {
+    imgEl.src = '/static/assets/images/' + imgFile;
+    imgEl.alt = item.name;
+    imgWrap.style.display = 'block';
+  } else {
+    imgWrap.style.display = 'none';
+  }
+
+  document.getElementById('evidence-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('evidence-modal').style.display = 'none';
+}
+
+document.getElementById('evidence-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// 外部调用：解锁新证据后刷新行
+function unlockEvidenceUI(ids) {
+  ids.forEach(id => {
+    COLLECTED.add(id);
+    const item = EVIDENCE_DATA.find(e => e.id === id);
+    if (!item) return;
+
+    const row = document.getElementById('evidence-row-' + id);
+    if (row) {
+      row.className = 'evidence-row';
+      row.querySelector('.evidence-name').textContent = item.name;
+      document.getElementById('status-' + id).innerHTML = '<span class="status-collected">已收集 ✓</span>';
+      const btn = row.querySelector('button');
+      btn.disabled = false;
+      btn.textContent = '查看档案';
+      btn.onclick = () => viewEvidence(id);
+    }
+
+    const count = document.getElementById('collected-count');
+    if (count) count.textContent = COLLECTED.size;
+  });
+
+  if (ids.length > 0) showUnlockNotify(ids);
+}
+
+function showUnlockNotify(ids) {
+  const items = ids.map(id => {
+    const item = EVIDENCE_DATA.find(e => e.id === id);
+    return item ? item.name : id;
+  });
+  const el = document.getElementById('unlock-notify');
+  document.getElementById('unlock-notify-text').textContent =
+    '发现新档案：' + items.join('、');
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+</script>
+{% endblock %}

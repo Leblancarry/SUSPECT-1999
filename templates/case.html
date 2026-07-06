@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}案件资料 - 南桥小区402寻人站{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div class="site-title-big">案件资料</div>
+  <div class="site-subtitle">南桥小区3栋402室 / 1997年8月14日 / 顾小满失踪案</div>
+  <hr class="header-hr">
+</div>
+
+<div class="marquee-bar">
+  <marquee behavior="scroll" direction="left" scrollamount="2">
+    本页内容为许延根据当年记录整理，部分资料已无法核实真实性 &nbsp;★&nbsp; 相关人员目前大多拒绝接受采访 &nbsp;★&nbsp;
+  </marquee>
+</div>
+
+<!-- Case summary box -->
+<table class="case-table" cellpadding="8" cellspacing="4" border="1" style="width:100%;">
+  <tr>
+    <td class="case-header-cell" colspan="2">
+      <strong>【档案编号：NQ-1997-0814-402】</strong>
+      &nbsp; 顾小满失踪案 &nbsp;
+      <span class="case-status blink-text">案件状态：未结</span>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="50%">
+      <div class="section-title">【基本情况】</div>
+      <table class="detail-table" cellpadding="4" cellspacing="0" border="1">
+        <tr><td class="info-label">案件类型</td><td>人员失踪</td></tr>
+        <tr><td class="info-label">发生时间</td><td>1997年8月14日 19:20</td></tr>
+        <tr><td class="info-label">发生地点</td><td>南桥小区3栋402室</td></tr>
+        <tr><td class="info-label">当事人</td><td>顾小满，男，约8岁</td></tr>
+        <tr><td class="info-label">门窗状态</td><td>全部关闭，无损坏</td></tr>
+        <tr><td class="info-label">楼道监控</td><td>当日设备故障，无录像</td></tr>
+        <tr><td class="info-label">目击证人</td><td>无</td></tr>
+        <tr><td class="info-label">当前下落</td><td class="blink-text">不明</td></tr>
+      </table>
+    </td>
+    <td valign="top" width="50%">
+      <div class="room-photo-wrap">
+        <img src="{{ url_for('static', filename='assets/images/room_402.png') }}"
+             alt="402室" class="room-photo">
+        <div class="room-photo-caption">402室内部 / 许延摄于2001年 / 衣柜为事发位置</div>
+      </div>
+      <div class="section-title" style="margin-top:8px;">【事发经过】</div>
+      <div class="case-text">
+        <p>
+          1997年8月14日下午，顾小满的母亲外出买菜，约18:30离家，嘱咐顾小满在家等候。当时顾小满正在卧室写暑假作业。
+        </p>
+        <p>
+          同日下午，402室曾申请电视维修。维修师傅<strong>马某某</strong>到达时间约为19:15，维修结论为设备正常。马师傅离开时间不明——邻居证词显示没有人看见他离开，但马师傅本人事后确认已经离开。
+        </p>
+        <p>
+          顾小满的母亲约20:10返回，发现家中无人。门窗无异常，儿子的书包、作业本、牙刷、小拖鞋均在原位。此后警方介入，调查无结果。
+        </p>
+        <p class="warn-text">
+          失踪后数周内，多数认识顾小满的邻居开始否认他存在。其母亲此后坚称自己没有孩子。
+        </p>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- Timeline -->
+<table class="case-table" cellpadding="8" cellspacing="4" border="1" style="width:100%; margin-top:10px;">
+  <tr>
+    <td class="case-header-cell" colspan="2">
+      <strong>【时间线】</strong>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <table class="timeline-table" cellpadding="4" cellspacing="2" border="0" width="100%">
+        <tr>
+          <td class="timeline-time">18:30</td>
+          <td class="timeline-event">顾小满母亲离家买菜，顾小满独自在402室写作业</td>
+        </tr>
+        <tr>
+          <td class="timeline-time">19:15</td>
+          <td class="timeline-event">维修师傅马某某进入402室，修理电视（无故障，疑似收到异常信号）</td>
+        </tr>
+        <tr class="timeline-key">
+          <td class="timeline-time warn-text">19:20 ⚠</td>
+          <td class="timeline-event warn-text">顾小满失踪。事发时间与本站上线时间重合。</td>
+        </tr>
+        <tr>
+          <td class="timeline-time">20:10</td>
+          <td class="timeline-event">母亲返回，发现家中空无一人</td>
+        </tr>
+        <tr>
+          <td class="timeline-time">2001-08-14<br>19:20</td>
+          <td class="timeline-event">本站《南桥小区402寻人站》上线。此后网页无法更新，停留在2001年状态。</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- Known rules box -->
+<table class="case-table" cellpadding="8" cellspacing="4" border="1" style="width:100%; margin-top:10px;">
+  <tr>
+    <td class="case-header-cell">
+      <strong>【已知规则 / 许延整理】</strong>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="rules-box">
+        <p class="rule-item">① 不要在 <strong>19:20</strong> 后接听电话。</p>
+        <p class="rule-item">② 不要在本站<strong>任何输入框</strong>填写真实姓名。<br>
+          <span style="font-size:11px; color:#666;">任何表单、任何对话框、任何需要文字的地方——都不行。无论它问你的是什么。</span></p>
+        <p class="rule-item">③ 不要<strong>保存</strong>本页。被保存的不是网页，是房间。<br>
+          <span style="font-size:11px; color:#666;">已有访客尝试保存过。他们没有再回来过。</span></p>
+        <p class="rule-item">④ <strong>402</strong> 不是地址，402是一个等待被命名的空间。<br>
+          <span style="font-size:11px; color:#666;">一旦有人为它命名，它就知道去哪里找你了。</span></p>
+      </div>
+      <p class="warn-text" style="margin-top:8px;">
+        注：以上为许延根据邻居证词整理，本站不对其真实性负责。
+      </p>
+    </td>
+  </tr>
+</table>
+
+<!-- Start investigation button -->
+<div style="text-align:center; margin-top:16px; margin-bottom:8px;">
+  <a href="/evidence" class="big-btn">开始收集证据 &gt;&gt;</a>
+  &nbsp;&nbsp;
+  <a href="/chat" class="big-btn">进入聊天室询问知情者 &gt;&gt;</a>
+</div>
+
+<div class="sys-notice" style="margin-top:8px;">
+  <span class="sys-label">[系统提示]</span>
+  当前已收集证据：<span id="evidence-count">0</span> / 11 条
+  &nbsp;|&nbsp; 案件进度：<span id="stage-display">调查中</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 访问案件页自动触发 E01 挂历 + E11 报纸
+  fetch('/api/page_trigger', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({trigger_id: 'case_visit'})
+  }).then(r => r.json()).then(data => {
+    if (data.newly_unlocked && data.newly_unlocked.length > 0) {
+      showCaseUnlock(data.newly_unlocked);
+    }
+    const c = (data.evidence_collected || []).length;
+    document.getElementById('evidence-count').textContent = c;
+  });
+
+  fetch('/api/state').then(r => r.json()).then(state => {
+    const c = (state.evidence_collected || []).length;
+    document.getElementById('evidence-count').textContent = c;
+  });
+
+  function showCaseUnlock(ids) {
+    const names = {'E01':'1997年挂历','E11':'旧报纸剪报'};
+    const label = ids.map(id => names[id] || id).join('、');
+    const div = document.createElement('div');
+    div.className = 'unlock-notify';
+    div.textContent = '发现新档案：' + label;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3500);
+  }
+</script>
+{% endblock %}

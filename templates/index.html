@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}南桥小区402寻人站 - 首页{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>
+        <div class="site-title-big">南桥小区402寻人站</div>
+        <div class="site-subtitle">寻找顾小满 / 1997年8月14日 / 南桥小区3栋402室</div>
+      </td>
+      <td align="right" valign="top">
+        <div class="header-stamp">
+          <div>失踪时间</div>
+          <div class="stamp-date">1997-08-14</div>
+          <div class="stamp-time">19:20</div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <hr class="header-hr">
+</div>
+
+<!-- Building photo banner -->
+<div class="building-banner">
+  <img src="{{ url_for('static', filename='assets/images/building_exterior.png') }}"
+       alt="南桥小区3栋" class="building-banner-img">
+  <div class="building-banner-caption">南桥小区3栋 / 摄于1998年前后</div>
+</div>
+
+<!-- Welcome marquee -->
+<div class="marquee-bar">
+  <marquee behavior="scroll" direction="left" scrollamount="2">
+    欢迎来到南桥小区402寻人站 &nbsp;★&nbsp; 本站致力于收集顾小满存在过的证据 &nbsp;★&nbsp; 如您认识顾小满，请在聊天室留言 &nbsp;★&nbsp; 警告：请勿告知本站任何人的真实姓名 &nbsp;★&nbsp; 不要在19:20后接听电话 &nbsp;★&nbsp;
+  </marquee>
+</div>
+
+<!-- Main intro table -->
+<table class="intro-table" cellpadding="8" cellspacing="4" border="1">
+  <tr>
+    <td colspan="2" class="intro-header-cell">
+      <span class="blink-text">★ 欢迎访问 ★</span>
+      本站建立于2001年，用于证明顾小满曾经存在。
+    </td>
+  </tr>
+  <tr>
+    <td class="intro-left" valign="top" width="55%">
+      <div class="section-title">【关于本站】</div>
+      <p>
+        本站由南桥小区前居民<strong>许延</strong>建立。<br>
+        1997年8月14日，顾小满在本小区3栋402室失踪。<br>
+        此后，认识顾小满的人开始陆续否认他曾经存在。<br>
+        本站用于收集顾小满存在过的<a href="/evidence">证据</a>。
+      </p>
+      <p>
+        如您曾见过顾小满，<br>
+        或者您认识他，<br>
+        请进入<a href="/chat">聊天室</a>与本站成员联系。
+      </p>
+      <p class="warn-text">
+        ⚠ 请勿使用真实姓名注册任何账号。<br>
+        ⚠ 请勿在19:20后接听来自未知号码的电话。<br>
+        ⚠ 请勿保存本页。
+      </p>
+    </td>
+    <td class="intro-right" valign="top" width="45%">
+      <div class="section-title">【失踪人员信息】</div>
+      <div class="xiaoman-photo-wrap clickable-clue" onclick="triggerIndexPhoto()"
+           title="点击查看">
+        <img src="{{ url_for('static', filename='assets/images/xiaoman_photo.png') }}"
+             alt="顾小满" class="xiaoman-photo">
+        <div class="xiaoman-photo-caption">顾小满 / 摄于1996年前后<br><small>（点击查看）</small></div>
+      </div>
+      <table class="person-info-table" cellpadding="4" cellspacing="0" border="1" style="margin-top:6px;">
+        <tr><td class="info-label">姓名</td><td>顾小满</td></tr>
+        <tr><td class="info-label">性别</td><td>男</td></tr>
+        <tr><td class="info-label">失踪年龄</td><td>约8岁</td></tr>
+        <tr><td class="info-label">失踪日期</td><td>1997年8月14日</td></tr>
+        <tr><td class="info-label">失踪地点</td><td>南桥小区3栋402室</td></tr>
+        <tr><td class="info-label">特征</td><td><span class="clickable-clue" onclick="triggerSlippers()" title="点击">常穿<u>绿色拖鞋</u></span></td></tr>
+        <tr><td class="info-label">当前状态</td><td class="blink-text">未归</td></tr>
+      </table>
+      <div style="margin-top:8px;">
+        <a href="/case" class="big-btn">开始调查 &gt;&gt;</a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- Quick links section -->
+<table class="quicklinks-table" cellpadding="6" cellspacing="4" border="1" style="margin-top:12px;">
+  <tr class="quicklinks-header">
+    <td colspan="3">【快速入口】</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="/case" class="quick-link-btn">
+        📁<br>案件资料<br><small>查看1997年案件档案</small>
+      </a>
+    </td>
+    <td align="center">
+      <a href="/chat" class="quick-link-btn">
+        💬<br>进入聊天室<br><small>与知情者交流</small>
+      </a>
+    </td>
+    <td align="center">
+      <a href="/evidence" class="quick-link-btn">
+        🔍<br>证据档案<br><small>收集存在证明</small>
+      </a>
+    </td>
+  </tr>
+</table>
+
+<!-- System notice box -->
+<div class="sys-notice" style="margin-top:12px;">
+  <span class="sys-label">[系统提示]</span>
+  当前访客：未命名 &nbsp;|&nbsp;
+  在线人数：<span id="online-count">1</span> &nbsp;|&nbsp;
+  本站状态：<span class="blink-text">运行中</span>
+  <br>
+  <span class="sys-small">注意：匿名访客的浏览记录无法归档。未归档访客无法正常离开。</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function pageTrigger(triggerId, label) {
+  fetch('/api/page_trigger', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({trigger_id: triggerId})
+  }).then(r => r.json()).then(data => {
+    if (data.newly_unlocked && data.newly_unlocked.length > 0) {
+      const div = document.createElement('div');
+      div.className = 'unlock-notify';
+      div.textContent = '发现新档案：' + label;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 3500);
+    }
+  });
+}
+function triggerIndexPhoto() { pageTrigger('index_photo', '儿童牙刷'); }
+function triggerSlippers()   { pageTrigger('index_slippers', '小拖鞋'); }
+</script>
+{% endblock %}

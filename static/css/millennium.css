@@ -1,0 +1,326 @@
+/* ============================================================
+   millennium.css — 千禧年旧网页基础风格
+   南桥小区402寻人站
+   ============================================================ */
+
+/* ── 全局重置与基底 ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #e8e0cc;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='%23c8b89a' opacity='0.25'/%3E%3C/svg%3E");
+  font-family: "SimSun", "宋体", "Times New Roman", serif;
+  font-size: 13px;
+  color: #1a1a1a;
+  min-height: 100vh;
+  padding: 28px 8px 40px 8px;
+}
+
+/* ── 链接：旧网页蓝紫色系 ── */
+a { color: #0000cc; text-decoration: underline; }
+a:visited { color: #551a8b; }
+a:hover { color: #cc0000; text-decoration: underline; }
+a:active { color: #cc0000; }
+
+/* ── 固定时钟 ── */
+#fixed-clock {
+  position: fixed;
+  top: 6px;
+  right: 10px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  color: #cc0000;
+  background: #f0ead8;
+  border: 1px solid #999;
+  padding: 1px 6px;
+  z-index: 9999;
+  letter-spacing: 2px;
+}
+
+/* ── 访客计数器 ── */
+#visitor-counter {
+  position: fixed;
+  top: 6px;
+  left: 10px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  color: #333;
+  background: #f0ead8;
+  border: 1px solid #999;
+  padding: 1px 6px;
+  z-index: 9999;
+}
+
+.counter-digits {
+  font-weight: bold;
+  color: #000080;
+  letter-spacing: 2px;
+}
+
+/* ── 警告栏 ── */
+#warning-bar {
+  background: #1a1a1a;
+  color: #ccaa00;
+  font-size: 11px;
+  font-family: "Courier New", monospace;
+  padding: 3px 10px;
+  text-align: center;
+  margin-bottom: 8px;
+  border: 1px solid #555;
+  letter-spacing: 0.5px;
+}
+
+/* ── 主布局表格 ── */
+.page-table {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+/* ── 左侧导航栏 ── */
+.nav-col {
+  width: 160px;
+  padding-right: 6px;
+  vertical-align: top;
+}
+
+.nav-box {
+  background: #dcd4c0;
+  border: 2px solid #999;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  padding: 0;
+}
+
+.nav-title {
+  background: #000080;
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 6px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-links a {
+  display: block;
+  padding: 3px 6px;
+  font-size: 12px;
+  color: #0000cc;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.nav-links a:hover {
+  background: #c8c0b0;
+  border: 1px solid #888;
+  color: #000080;
+}
+
+.nav-links a.nav-danger { color: #880000; }
+.nav-links a.nav-danger:hover { background: #ddd; color: #cc0000; }
+
+.nav-hr {
+  border: none;
+  border-top: 1px solid #999;
+  margin: 4px 0;
+}
+
+.nav-box-footer {
+  padding: 4px 6px;
+  font-size: 10px;
+  color: #666;
+  border-top: 1px dashed #aaa;
+}
+
+.announce-text {
+  padding: 6px 8px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* ── 内容栏 ── */
+.content-col {
+  padding-left: 6px;
+  vertical-align: top;
+}
+
+/* ── 内容头部 ── */
+.content-header {
+  margin-bottom: 8px;
+}
+
+.site-title-big {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000080;
+  letter-spacing: 2px;
+  font-family: "SimSun", "宋体", serif;
+}
+
+.site-subtitle {
+  font-size: 11px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.header-hr {
+  border: none;
+  border-top: 2px solid #000080;
+  margin-top: 6px;
+}
+
+/* ── 滚动字幕栏 ── */
+.marquee-bar {
+  background: #fff8e8;
+  border: 1px solid #ccc;
+  padding: 3px 6px;
+  font-size: 11px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* ── Win98风格按钮 ── */
+.win98-btn,
+button.win98-btn {
+  background: #d4cfc4;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #555;
+  border-bottom: 2px solid #555;
+  padding: 3px 10px;
+  font-family: "SimSun", "宋体", serif;
+  font-size: 12px;
+  color: #000;
+  cursor: pointer;
+  min-width: 60px;
+}
+
+.win98-btn:active {
+  border-top: 2px solid #555;
+  border-left: 2px solid #555;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.win98-btn:disabled {
+  color: #888;
+  cursor: default;
+}
+
+/* ── 大号行动按钮 ── */
+.big-btn {
+  display: inline-block;
+  background: #d4cfc4;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #555;
+  border-bottom: 2px solid #555;
+  padding: 5px 14px;
+  font-size: 13px;
+  color: #000080;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: "SimSun", "宋体", serif;
+}
+
+.big-btn:hover {
+  background: #c8c0b0;
+  color: #cc0000;
+  text-decoration: none;
+}
+
+/* ── 段落标题 ── */
+.section-title {
+  font-weight: bold;
+  color: #000080;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+/* ── 闪烁文字 ── */
+.blink-text {
+  animation: blink 1.2s step-start infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── 警告文字 ── */
+.warn-text {
+  color: #880000;
+  font-size: 12px;
+}
+
+/* ── 系统提示条 ── */
+.sys-notice {
+  background: #f0f0e8;
+  border: 1px solid #aaa;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-family: "Courier New", monospace;
+  color: #333;
+}
+
+.sys-label {
+  color: #006600;
+  font-weight: bold;
+}
+
+.sys-small {
+  font-size: 10px;
+  color: #666;
+}
+
+/* ── 表格共用 ── */
+table {
+  border-collapse: collapse;
+}
+
+td {
+  vertical-align: top;
+}
+
+/* ── 页脚 ── */
+.page-footer {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px dashed #aaa;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── CRT 扫描线效果 ── */
+.crt-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 99998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}

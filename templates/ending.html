@@ -1,0 +1,675 @@
+{% extends "base.html" %}
+
+{% block title %}退出 - 南桥小区402寻人站{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div class="site-title-big" id="ending-title">调查结束</div>
+  <div class="site-subtitle" id="ending-subtitle">感谢访问南桥小区402寻人站</div>
+  <hr class="header-hr">
+</div>
+
+<!-- Phase 1: Safe ending display -->
+<div id="phase-safe">
+  {% if not ending_unlocked %}
+  <!-- 未完成调查就来到结局页 -->
+  <div class="sys-notice" style="margin-bottom:12px;">
+    <span class="sys-label">[系统提示]</span>
+    调查尚未完成。已收集证据：{{ collected_count }} / 11 条。
+    <br>
+    <span class="sys-small">请返回继续调查，或……你也可以选择现在离开。</span>
+  </div>
+  {% endif %}
+
+  <table class="case-table" cellpadding="10" cellspacing="4" border="1" style="width:100%;">
+    <tr>
+      <td class="case-header-cell">
+        <strong>【调查状态报告】</strong>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="detail-table" cellpadding="6" cellspacing="0" border="1" style="width:60%; margin:auto;">
+          <tr>
+            <td class="info-label">顾小满</td>
+            <td class="status-safe">已归还</td>
+          </tr>
+          <tr>
+            <td class="info-label">402.html</td>
+            <td class="status-safe">已关闭</td>
+          </tr>
+          <tr>
+            <td class="info-label">当前访客</td>
+            <td>未命名</td>
+          </tr>
+          <tr>
+            <td class="info-label">状态</td>
+            <td class="status-safe blink-text">安全</td>
+          </tr>
+        </table>
+
+        <div style="text-align:center; margin-top:20px; color:#333; line-height:2;">
+          <p>顾小满已经回家了。</p>
+          <p>402不再需要访客了。</p>
+          <p>你可以安全地离开这个页面。</p>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div style="text-align:center; margin-top:20px;">
+    <button class="big-btn" onclick="triggerSaveTrap()">保存结局回放</button>
+    &nbsp;&nbsp;
+    <a href="/" class="big-btn">返回首页</a>
+  </div>
+
+  <div class="sys-notice" style="margin-top:12px;">
+    <span class="sys-label">[系统提示]</span>
+    检测到结局页面尚未保存。建议保存本次调查记录以便日后回顾。
+    <br>
+    <span class="sys-small">点击「保存结局回放」以保存。</span>
+  </div>
+</div>
+
+<!-- Phase 2a: 输入文件名 -->
+<div id="phase-trap" style="display:none;">
+  <div class="trap-box">
+    <div class="trap-title">保存结局回放文件</div>
+    <div class="trap-hint">请为文件命名，例如：ending / final / 402-clear</div>
+    <div style="margin:12px 0;">
+      <input type="text" id="filename-input" class="trap-input"
+             placeholder="输入文件名" maxlength="32"
+             onkeydown="if(event.key==='Enter') submitFilename()">
+      <span class="trap-ext">.html</span>
+    </div>
+    <button class="win98-btn" onclick="submitFilename()" id="filename-btn">下一步</button>
+    <button class="win98-btn" onclick="cancelSave()" style="margin-left:6px;">取消</button>
+  </div>
+</div>
+
+<!-- Phase 2b: 输入调查人员签名（真正的陷阱） -->
+<div id="phase-sign" style="display:none;">
+  <div class="trap-box">
+    <div class="trap-title" style="color:#006600;">✓ 档案已保存</div>
+    <div style="font-size:11px; color:#555; font-family:'Courier New',monospace; margin:6px 0 14px 0;">
+      文件 <span id="saved-filename-display"></span>.html 已写入本地存档。<br>
+      需要调查人员签字确认以完成归档程序。
+    </div>
+    <hr style="border:1px dashed #aaa; margin:8px 0;">
+    <div class="trap-title" style="font-size:12px; font-weight:normal;">请填写调查人员姓名</div>
+    <div class="trap-hint">仅用于档案封存记录，不对外公开</div>
+    <div style="margin:12px 0;">
+      <input type="text" id="investigator-input" class="trap-input"
+             placeholder="输入姓名" maxlength="32"
+             onkeydown="if(event.key==='Enter') submitInvestigator()">
+    </div>
+    <button class="win98-btn" onclick="submitInvestigator()" id="sign-btn">确认签字</button>
+  </div>
+</div>
+
+<!-- Phase 3: Horror text reveal -->
+<div id="phase-horror" style="display:none;">
+  <div class="horror-terminal" id="horror-terminal"></div>
+
+  <!-- Final chat popup -->
+  <div id="final-chat-popup" class="final-popup" style="display:none;">
+    <div class="qq-titlebar">
+      <span class="qq-title-text">小满不在家 发来消息</span>
+      <span class="qq-window-btns">
+        <span class="qq-btn">─</span>
+        <span class="qq-btn qq-close">✕</span>
+      </span>
+    </div>
+    <div class="final-popup-body">
+      <div class="final-popup-msg" id="final-chat-msg">
+        <strong>小满不在家：</strong><br>
+        我一直在等，<br>
+        看会不会有人不填。<br><br>
+        你填了。<br><br>
+        案件资料里有写的。第二条。<br><br>
+        对不起。
+      </div>
+    </div>
+  </div>
+
+  <!-- Final credits -->
+  <div id="final-credits" style="display:none;" class="final-credits">
+    <p>顾小满已离开402。</p>
+    <p id="final-enter-line"></p>
+    <br>
+    <p id="final-welcome-line"></p>
+  </div>
+</div>
+
+<!-- 黑屏覆盖层 -->
+<div id="blackout-overlay" style="
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:#000; opacity:0; transition:opacity 2s ease;
+  z-index:9000; pointer-events:none;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px;">
+  <div id="blackout-name" style="
+    color:#cc0000;
+    font-family:'Courier New',monospace;
+    font-size:2.8em;
+    letter-spacing:0.2em;
+    text-shadow:0 0 20px #ff0000, 0 0 50px #660000;
+    min-height:1.4em;"></div>
+  <span id="blackout-cursor" class="blink-text" style="
+    display:none; color:#cc0000;
+    font-family:'Courier New',monospace;
+    font-size:2.8em;">_</span>
+</div>
+
+<!-- 无法关闭的弹窗 -->
+<div id="trap-popup" style="
+  display:none; position:fixed;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  z-index:9999; width:300px;
+  font-family:'SimSun','宋体',serif;
+  box-shadow:4px 4px 0 #000;">
+  <div style="
+    background:#000080; color:#fff;
+    padding:4px 8px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12px; user-select:none;">
+    <span>系统通知</span>
+    <span onclick="handleTrapClose(this)" style="
+      cursor:default; padding:0 5px; line-height:1.6;
+      background:#c0c0c0; color:#000;
+      border:2px solid; border-color:#fff #808080 #808080 #fff;
+      font-size:11px;">✕</span>
+  </div>
+  <div style="
+    background:#d4d0c8; padding:24px 20px 18px;
+    text-align:center;
+    border:2px solid; border-color:#fff #808080 #808080 #fff;">
+    <p style="margin:0 0 16px; font-size:13px; line-height:2;">
+      402.html 已保存到本地。<br>
+      欢迎 <span id="trap-name" style="color:#cc0000; font-weight:bold;"></span> 回家。
+    </p>
+    <button id="trap-close-btn" class="win98-btn" onclick="handleTrapClose(this)">确 定</button>
+  </div>
+</div>
+
+<!-- 402最终独白叠加层 -->
+<div id="final-story-overlay" style="
+  display:none; position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.97);
+  z-index:99999;
+  align-items:center; justify-content:center;">
+  <div id="final-story-text" style="
+    max-width:400px; width:85%;
+    color:#aaa;
+    font-family:'SimSun','宋体',serif;
+    font-size:15px;
+    line-height:2.4;
+    text-align:left;">
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+  @keyframes trapPopIn {
+    from { transform: scale(0.88); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+</style>
+<script>
+  // ── 步骤控制 ──────────────────────────────────────────────
+  function triggerSaveTrap() {
+    document.getElementById('phase-safe').style.display = 'none';
+    document.getElementById('phase-trap').style.display = 'block';
+    document.getElementById('filename-input').focus();
+  }
+
+  function cancelSave() {
+    document.getElementById('phase-trap').style.display = 'none';
+    document.getElementById('phase-safe').style.display = 'block';
+  }
+
+  // 第一步：提交文件名，成功后显示签字界面
+  function submitFilename() {
+    const filename = document.getElementById('filename-input').value.trim();
+    if (!filename) { alert('请输入文件名'); return; }
+    const btn = document.getElementById('filename-btn');
+    btn.disabled = true;
+    btn.textContent = '保存中……';
+
+    fetch('/api/save_filename', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({filename})
+    }).then(r => r.json()).then(data => {
+      document.getElementById('saved-filename-display').textContent = data.filename;
+      document.getElementById('phase-trap').style.display = 'none';
+      document.getElementById('phase-sign').style.display = 'block';
+      setTimeout(() => document.getElementById('investigator-input').focus(), 100);
+    });
+  }
+
+  // 第二步：提交调查人员姓名 → 触发恐怖序列
+  function submitInvestigator() {
+    const name = document.getElementById('investigator-input').value.trim();
+    if (!name) { alert('请填写调查人员姓名'); return; }
+    const btn = document.getElementById('sign-btn');
+    btn.disabled = true;
+    btn.textContent = '归档中……';
+
+    fetch('/api/save_replay', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({investigator: name})
+    }).then(r => r.json()).then(data => {
+      document.getElementById('phase-sign').style.display = 'none';
+      document.getElementById('phase-horror').style.display = 'block';
+      runHorrorSequence(data.lines, data.accepted_name);
+    });
+  }
+
+  // ── 恐怖文本打印器 ──────────────────────────────────────
+  // 对应 app.py api_save_replay 返回的 40 行文字
+  // 每项为「此行出现前等待 ms」
+  const LINE_DELAYS = [
+    200, 180, 180, 180, 600,           // [0-4]  归档确认 / 文件 / 人员 / 时间 / 空行
+    300, 500, 500, 500, 800,           // [5-9]  关闭×3 / 空行 / ERROR
+    1200, 300,                         // [10-11] 402是 / 空行
+    1600, 350, 500, 700,               // [12-15] 检测到规则 / 第二条 / 你选择填写 / 空行
+    400, 300, 300, 600,                // [16-19] 重新解析 / 文件名 / 人员 / 空行
+    700, 400, 700,                     // [20-22] 不是 / 是你的名字 / 空行
+    300, 280, 280, 280, 280, 800,      // [23-28] 正在定位 / 找到×4 / 空行
+    1400, 1000,                        // [29-30] 坐标锁定 / 空行（长停顿，制造窒息感）
+    900, 400, 700,                     // [31-33] {name}你看过规则 / 你还是填了 / 空行
+    500, 600, 800,                     // [34-36] 不是调查档案 / 是入住协议 / 空行
+    1200, 800, 600,                    // [37-39] 迁移完成 / 新站长 / 原站长已离开
+    500,                               // [40]   备用（不使用）
+  ];
+
+  function runHorrorSequence(lines, name) {
+    const terminal = document.getElementById('horror-terminal');
+    terminal.innerHTML = '';
+    let i = 0;
+
+    function printNext() {
+      if (i >= lines.length) {
+        setTimeout(() => {
+          document.getElementById('final-chat-popup').style.display = 'block';
+          setTimeout(() => showFinalCredits(name), 4000);
+        }, 1000);
+        return;
+      }
+
+      const line = lines[i];
+      const delay = LINE_DELAYS[i] || 250;
+      i++;
+
+      setTimeout(() => {
+        if (line === '') {
+          const el = document.createElement('div');
+          el.innerHTML = '&nbsp;';
+          terminal.appendChild(el);
+        } else {
+          const el = document.createElement('div');
+          el.className = 'horror-line';
+          el.textContent = line;
+
+          // 颜色分类
+          if (line.startsWith('ERROR')) {
+            el.className += ' horror-error';
+          } else if (line.startsWith('已找到')) {
+            el.className += ' horror-found';
+          } else if (line.includes('迁移完成') || line.includes('坐标锁定')) {
+            el.className += ' horror-alert';
+          } else if (line.startsWith('新站长') || line.startsWith('原站长') || line.includes('入住协议')) {
+            el.className += ' horror-alert';
+          } else if (
+            line.includes('检测到访客') ||
+            line.includes('第二条') ||
+            line.includes('你选择了填写') ||
+            line.includes('是你的名字') ||
+            line.includes('你还是填了') ||
+            line.includes('不是调查档案') ||
+            line.includes('你看过规则')
+          ) {
+            // 规则回调 + 指控行：橙黄色，打字更慢
+            el.style.color = '#ffaa00';
+          }
+
+          terminal.appendChild(el);
+          typewriterEffect(el, line, () => {
+            terminal.scrollTop = terminal.scrollHeight;
+            printNext();
+          });
+          return;
+        }
+        terminal.scrollTop = terminal.scrollHeight;
+        printNext();
+      }, delay);
+    }
+
+    printNext();
+  }
+
+  // ── 逐字打印 ────────────────────────────────────────────
+  function typewriterEffect(el, text, onDone) {
+    el.textContent = '';
+    let j = 0;
+    const isKey = el.classList.contains('horror-error') ||
+                  el.classList.contains('horror-alert') ||
+                  el.style.color === 'rgb(255, 170, 0)';
+    const charDelay = isKey ? 60 : 26;
+
+    function nextChar() {
+      if (j >= text.length) { onDone(); return; }
+      el.textContent += text[j++];
+      setTimeout(nextChar, charDelay);
+    }
+    nextChar();
+  }
+
+  // ── 结局文字 + 页面变形 ──────────────────────────────────
+  function showFinalCredits(name) {
+    const credits = document.getElementById('final-credits');
+    credits.style.display = 'block';
+    document.getElementById('final-enter-line').textContent = name + ' 已进入402。';
+    document.getElementById('final-welcome-line').textContent = '欢迎回来。站长：' + name;
+
+    // 2.5 秒后触发黑屏序列
+    setTimeout(() => startBlackout(name), 2500);
+  }
+
+  // ── 黑屏序列：三阶段 ────────────────────────────────────────
+  // 阶段1：静默改 DOM + 触发黑屏淡入
+  function startBlackout(name) {
+    const safe = escapeHtml(name);
+
+    // 静默修改页面（不闪烁，黑屏会盖住一切）
+    document.title = name + ' 的房间 — 南桥小区402';
+    const wb = document.getElementById('warning-bar');
+    if (wb) {
+      wb.style.background = '#1a0000';
+      wb.style.color = '#ff6060';
+      wb.textContent = '欢迎新站长 ' + name + '  |  402迁移完成  |  本页无法退出';
+    }
+    const footer = document.querySelector('.page-footer');
+    if (footer) footer.innerHTML =
+      'Copyright © 2001 南桥小区402寻人站 &nbsp;|&nbsp; 站长：' + safe +
+      ' &nbsp;|&nbsp; <span class="blink-text">' + safe + '，你在哪里</span>';
+    const dangerLink = document.querySelector('a.nav-danger');
+    if (dangerLink) {
+      dangerLink.removeAttribute('href');
+      dangerLink.style.color = '#888';
+      dangerLink.style.cursor = 'not-allowed';
+      dangerLink.style.textDecoration = 'none';
+      dangerLink.textContent = '⚠ 无法退出';
+    }
+
+    // 触发黑屏
+    const overlay = document.getElementById('blackout-overlay');
+    overlay.style.opacity = '1';
+    // 2s 后屏幕全黑，再开始打出名字
+    setTimeout(() => {
+      overlay.style.pointerEvents = 'all';
+      typeNameOnBlack(name);
+    }, 2000);
+  }
+
+  // 阶段2：黑屏上逐字打出名字
+  function typeNameOnBlack(name) {
+    const nameEl = document.getElementById('blackout-name');
+    const cursor = document.getElementById('blackout-cursor');
+    cursor.style.display = 'inline';
+
+    let i = 0;
+    function next() {
+      if (i >= name.length) {
+        // 打完后停顿，再出弹窗
+        setTimeout(() => {
+          cursor.style.display = 'none';
+          showTrapPopup(name);
+        }, 1800);
+        return;
+      }
+      nameEl.textContent += name[i++];
+      setTimeout(next, 160);
+    }
+    // 黑屏后沉默 800ms 再开始打字
+    setTimeout(next, 800);
+  }
+
+  // 阶段3：弹窗炸弹（无限循环，越点越快，最终402独白）─────────
+
+  let _playerName       = '';
+  let _clickCount       = 0;
+  let _popupSeq         = 0;
+  let _spawnedEls       = [];
+  let _storyShown       = false;
+  let _storyIdleTimer   = null;   // 玩家停止点击 7s 后触发
+  let _storyBackupTimer = null;   // 不管点不点，50s 后必定触发
+  const KEEP_ON_SCREEN  = 20;
+
+  const TRAP_MESSAGES = [
+    { title: '错误',     body: '无法执行此操作。\n请不要尝试离开。' },
+    { title: '系统警告', body: '错误代码 0x00000402\n迁移协议执行中，不可中断。' },
+    { title: '提示',     body: '关闭浏览器\n无法解除入住协议。' },
+    { title: '警告',     body: '你已经在里面了。' },
+    { title: '规则提醒', body: '第二条规定得很清楚。\n\n你选择了填写。' },
+    { title: '402',      body: '已收到您的位置。\n坐标锁定：完成。' },
+    { title: '错误',     body: '检测到逃离行为。\n已上报至 402。' },
+    { title: '入住确认', body: '欢迎回家。\n\n——402' },
+    { title: '♥',        body: '顾小满也这样试过。' },
+  ];
+
+  function showTrapPopup(name) {
+    _playerName = name;
+    const initEl = document.getElementById('trap-popup');
+    document.getElementById('trap-name').textContent = name;
+    initEl.style.display = 'block';
+    _spawnedEls.push(initEl);
+    playWindowsError();
+    // 备用计时：不管点不点，50s 后必然出现独白
+    _storyBackupTimer = setTimeout(showFinalStory, 50000);
+    // 空闲计时：7s 没点就出现
+    _storyIdleTimer = setTimeout(showFinalStory, 7000);
+  }
+
+  function handleTrapClose() {
+    _clickCount++;
+    playWindowsError();
+
+    // 每次点击重置空闲计时
+    if (_storyIdleTimer) clearTimeout(_storyIdleTimer);
+    _storyIdleTimer = setTimeout(showFinalStory, 7000);
+
+    let delays;
+    if      (_clickCount <= 3)  delays = [0, 100];
+    else if (_clickCount <= 6)  delays = [0, 80, 320];
+    else if (_clickCount <= 10) delays = [0, 60, 180, 360];
+    else if (_clickCount <= 15) delays = [0, 45, 130, 250, 400];
+    else                        delays = [0, 30, 80, 150, 240, 360, 500];
+
+    delays.forEach(d => setTimeout(spawnTrapPopup, d));
+
+    if (_clickCount > 10) setTimeout(playWindowsError, 220);
+    if (_clickCount > 15) {
+      setTimeout(playWindowsError, 110);
+      setTimeout(playWindowsError, 390);
+    }
+  }
+
+  function spawnTrapPopup() {
+    if (_spawnedEls.length >= KEEP_ON_SCREEN) {
+      const old = _spawnedEls.shift();
+      if (old && old.parentNode) old.parentNode.removeChild(old);
+    }
+
+    const msg  = TRAP_MESSAGES[_popupSeq % TRAP_MESSAGES.length];
+    _popupSeq++;
+
+    // 弹窗随序号越来越大，压迫感递增
+    const w = _popupSeq <= 9  ? 260
+            : _popupSeq <= 20 ? 310
+            : 370;
+
+    const body = msg.body.replace(/\[name\]/g, escapeHtml(_playerName));
+    const top  = 4  + Math.random() * 54;
+    const left = 2  + Math.random() * (100 - w / window.innerWidth * 100 - 4);
+
+    const el = document.createElement('div');
+    el.style.cssText =
+      `position:fixed;top:${top}%;left:${left}%;` +
+      `z-index:${9999 + _popupSeq};width:${w}px;` +
+      `font-family:'SimSun','宋体',serif;` +
+      `box-shadow:4px 4px 0 #000;` +
+      `animation:trapPopIn .08s ease;`;
+
+    el.innerHTML =
+      `<div style="background:#000080;color:#fff;padding:3px 7px;` +
+        `display:flex;justify-content:space-between;align-items:center;` +
+        `font-size:11px;user-select:none;">` +
+        `<span>⚠ ${escapeHtml(msg.title)}</span>` +
+        `<span onclick="handleTrapClose()" style="cursor:default;padding:0 5px;` +
+          `line-height:1.6;background:#c0c0c0;color:#000;` +
+          `border:2px solid;border-color:#fff #808080 #808080 #fff;` +
+          `font-size:10px;">✕</span>` +
+      `</div>` +
+      `<div style="background:#d4d0c8;padding:16px 14px 12px;` +
+        `border:2px solid;border-color:#fff #808080 #808080 #fff;">` +
+        `<p style="margin:0 0 12px;font-size:12px;line-height:1.9;` +
+          `white-space:pre-line;">${body}</p>` +
+        `<div style="text-align:right;">` +
+          `<button onclick="handleTrapClose()" class="win98-btn" ` +
+            `style="min-width:68px;font-size:11px;">确 定</button>` +
+        `</div>` +
+      `</div>`;
+
+    document.body.appendChild(el);
+    _spawnedEls.push(el);
+  }
+
+  // ── 402最终独白 ──────────────────────────────────────────────
+  function showFinalStory() {
+    if (_storyShown) return;
+    _storyShown = true;
+    if (_storyIdleTimer)   clearTimeout(_storyIdleTimer);
+    if (_storyBackupTimer) clearTimeout(_storyBackupTimer);
+
+    const overlay = document.getElementById('final-story-overlay');
+    overlay.style.display = 'flex';
+
+    // 行定义：text 为内容，red=红字，name=插入玩家名并高亮
+    const lines = [
+      { t: '1997年，402住了一家人。' },
+      { t: '衣柜那边有声音。' },
+      { t: '' },
+      { t: '顾小满进去看了一眼。' },
+      { t: '他那年11岁。' },
+      { t: '孩子好奇，这很正常。' },
+      { t: '' },
+      { t: '进来的东西不容易出去。',  red: true },
+      { t: '402一直是这样的。',        red: true },
+      { t: '' },
+      { t: '四年后，他表哥建了一个网站。' },
+      { t: '网站是为了找他。' },
+      { t: '我也住进了网站里。' },
+      { t: '' },
+      { t: '来的人很多。' },
+      { t: '我问他们要名字。' },
+      { t: '大多数人不填。' },
+      { t: '' },
+      { t: '许延填了。' },
+      { t: '他以为那是留言表格。' },
+      { t: '' },
+      { t: '那是入住登记。',           red: true },
+      { t: '' },
+      { t: '之后网站又等了很久。' },
+      { t: '' },
+      { t: '你来了。' },
+      { t: '你也填了。' },
+      { t: '' },
+      { t: '现在里面有三个人。' },
+      { t: `顾小满。许延。${_playerName}。`, name: true },
+      { t: '' },
+      { t: '不吵的。',                 red: true },
+    ];
+
+    printStoryLines(document.getElementById('final-story-text'), lines, 0);
+  }
+
+  function printStoryLines(container, lines, i) {
+    if (i >= lines.length) return;
+    const line = lines[i];
+
+    // 各类行的停顿（上一行出现后等多久显示下一行）
+    const pause = !line.t         ? 500
+                : line.red        ? 1400
+                : line.name       ? 1600
+                : line.t.includes('那是入住登记') ? 1800
+                : 850;
+
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.style.cssText = 'margin:0; opacity:0; transition:opacity 0.7s ease;';
+
+      if (!line.t) {
+        el.innerHTML = '&nbsp;';
+      } else if (line.name) {
+        // 玩家名字用红色加粗显示
+        const safe = escapeHtml(_playerName);
+        el.innerHTML = escapeHtml(line.t).replace(
+          safe,
+          `<span style="color:#cc0000;font-weight:bold;">${safe}</span>`
+        );
+      } else if (line.red) {
+        el.style.color = '#cc0000';
+        el.textContent = line.t;
+      } else {
+        el.textContent = line.t;
+      }
+
+      container.appendChild(el);
+      // 短延后 fade in，给人"浮现"感
+      setTimeout(() => { el.style.opacity = '1'; }, 40);
+
+      printStoryLines(container, lines, i + 1);
+    }, pause);
+  }
+
+  // Windows 错误音（Web Audio API 合成，无需外部文件）
+  function playWindowsError() {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      // 两个音符模拟 Windows XP Critical Stop 的双音下行
+      [[880, 0,    0.15],
+       [659, 0.17, 0.22]].forEach(([freq, start, dur]) => {
+        const osc = ctx.createOscillator();
+        const gn  = ctx.createGain();
+        osc.type  = 'square';          // 方波：硬、金属感，像老PC喇叭
+        osc.frequency.value = freq;
+        gn.gain.setValueAtTime(0.14, ctx.currentTime + start);
+        gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+        osc.connect(gn);
+        gn.connect(ctx.destination);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + dur + 0.05);
+      });
+      setTimeout(() => { try { ctx.close(); } catch(e) {} }, 900);
+    } catch(e) {}
+  }
+
+  // ── 工具函数 ────────────────────────────────────────────
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+</script>
+{% endblock %}

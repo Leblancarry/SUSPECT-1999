@@ -1,0 +1,33 @@
+# 环境变量（含 API key，绝对不能上传）
+.env
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# 虚拟环境
+venv/
+env/
+.venv/
+.env/
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Flask session / 临时文件
+flask_session/
+instance/
+
+# 日志
+*.log
+.claude/

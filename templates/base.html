@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="GB2312">
+  <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+  <meta name="viewport" content="width=800">
+  <title>{% block title %}南桥小区402寻人站{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/millennium.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- CRT scanline overlay -->
+<div class="crt-overlay"></div>
+
+<!-- Fixed clock display -->
+<div id="fixed-clock">19:20</div>
+
+<!-- Visitor counter -->
+<div id="visitor-counter">
+  访客计数：<span class="counter-digits">000402</span>
+</div>
+
+<!-- Warning bar -->
+<div id="warning-bar">
+  ⚠ 警告：请勿在 19:20 接听电话 &nbsp;|&nbsp; 请勿使用真实姓名注册 &nbsp;|&nbsp; 本站最佳浏览器：IE 5.0
+</div>
+
+<!-- Main container -->
+<table class="page-table" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <!-- Left nav column -->
+    <td class="nav-col" valign="top">
+      <div class="nav-box">
+        <div class="nav-title">站点导航</div>
+        <div class="nav-links">
+          <a href="/">🏠 首页</a>
+          <a href="/case">📁 案件资料</a>
+          <a href="/chat">💬 聊天室</a>
+          <a href="/evidence">🔍 证据档案</a>
+          <a href="#" onclick="alert('站长信箱已停止服务。\n最后更新：2001-08-14 19:20')">✉ 站长信箱</a>
+          <hr class="nav-hr">
+          <a href="/ending" class="nav-danger">⚠ 退出</a>
+        </div>
+        <div class="nav-box-footer">
+          本站支持 800×600 分辨率<br>
+          最后更新：2001-08-14 19:20
+        </div>
+      </div>
+
+      <!-- 当前任务提示 -->
+      <div class="nav-box" style="margin-top:8px;" id="mission-box">
+        <div class="nav-title">📋 当前任务</div>
+        <div class="announce-text" id="mission-text">
+          正在加载……
+        </div>
+      </div>
+
+      <div class="nav-box" style="margin-top:8px;">
+        <div class="nav-title">站长公告</div>
+        <div class="announce-text">
+          本站用于收集顾小满存在的证据。<br><br>
+          如您认识顾小满，请在留言板留言。<br><br>
+          <span class="blink-text">请勿告知本站任何人的真实姓名。</span>
+        </div>
+      </div>
+    </td>
+
+    <!-- Main content column -->
+    <td class="content-col" valign="top">
+      {% block content %}{% endblock %}
+    </td>
+  </tr>
+</table>
+
+<!-- Page footer -->
+<div class="page-footer">
+  Copyright © 2001 南桥小区402寻人站 &nbsp;|&nbsp;
+  制作：许延 &nbsp;|&nbsp;
+  本站永久免费 &nbsp;|&nbsp;
+  <span class="blink-text">顾小满，你在哪里</span>
+</div>
+
+<script src="{{ url_for('static', filename='js/state.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/contamination.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
