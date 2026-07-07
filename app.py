@@ -158,7 +158,60 @@ def _mock_reply(character_id: str, user_message: str) -> str:
 
 def get_character_reply(character_id: str, user_message: str, game_state: dict,
                         api_key_override: str = "") -> str:
-    return _mock_reply(character_id, user_message)
+    # 优先级：玩家自带 key → 服务器环境变量 → mock 回复
+    api_key = api_key_override.strip() or os.getenv("DEEPSEEK_API_KEY", "").strip()
+
+    if not api_key:
+        return _mock_reply(character_id, user_message)
+
+    characters = load_json("characters.json")
+    if character_id not in characters:
+        return "……"
+    char = characters[character_id]
+
+    # 格式约束前缀：防止 AI 输出动作描写/剧本格式
+    FORMAT_RULES = (
+        "【发消息格式，绝对禁止违反】\n"
+        "你在QQ聊天窗口里打字，不是在写小说、剧本或角色扮演。\n"
+        "以下内容一律禁止出现，无论什么情况：\n"
+        "- 全角括号里的动作/神态：（停顿）（忽然停住）（沉默）（叹气）（皱眉）（犹豫）（转移话题）等任何此类\n"
+        "- 半角括号里的动作：(沉默)(停顿) 等\n"
+        "- 星号包裹的动作：*叹气* *停顿* 等\n"
+        "- 方括号动作：【皱眉】【沉默】 等\n"
+        "- 书名号动作：「沉默」「停顿」 等\n"
+        "- 任何描述肢体、表情、情绪状态的词，哪怕只有两个字\n"
+        "你只能输出纯文字，就像在手机上给朋友发短消息。\n"
+        "每条消息1到3句，简短自然。禁止markdown、禁止分段编号、禁止重复自己名字。\n\n"
+    )
+    # System prompt = 格式规则 + 角色设定 + 当前游戏状态
+    system_content = FORMAT_RULES + char["system_prompt"] + _build_state_context(game_state)
+
+    # 带入本角色最近 6 轮对话历史，给 AI 上下文
+    history = game_state.get("chat_history", [])
+    char_history = [h for h in history if h["character"] == character_id][-6:]
+
+    messages = [{"role": "system", "content": system_content}]
+    for h in char_history:
+        messages.append({"role": "user",      "content": h["user"]})
+        messages.append({"role": "assistant", "content": h["reply"]})
+    messages.append({"role": "user", "content": user_message})
+
+    try:
+        from openai import OpenAI
+        client = OpenAI(
+            api_key=api_key,
+            base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+        )
+        response = client.chat.completions.create(
+            model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
+            messages=messages,
+            max_tokens=120,
+            temperature=0.85,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"[DeepSeek ERROR] {e}", flush=True)
+        return _mock_reply(character_id, user_message)
 
 
 # ─── Page routes ──────────────────────────────────────────────────────────────
@@ -393,6 +446,32 @@ def api_save_replay():
 
     return jsonify({"accepted_name": safe_name, "filename": filename, "lines": lines})
 
+
+@app.route("/api/set_apikey", methods=["POST"])
+def api_set_apikey():
+    """玩家提交自己的 DeepSeek API Key，存入 session（不持久化，关闭浏览器即失效）"""
+    data = request.get_json()
+    key = data.get("apikey", "").strip()
+    if key:
+        session["user_apikey"] = key
+    else:
+        session.pop("user_apikey", None)
+    has_key = bool(key or os.getenv("DEEPSEEK_API_KEY", "").strip())
+    return jsonify({"ok": True, "has_key": has_key, "source": "player" if key else ("server" if os.getenv("DEEPSEEK_API_KEY") else "none")})
+
+
+@app.route("/api/apikey_status", methods=["GET"])
+def api_apikey_status():
+    """返回当前 AI 模式状态，不暴露 key 本身"""
+    player_key = session.get("user_apikey", "")
+    server_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
+    if player_key:
+        source = "player"
+    elif server_key:
+        source = "server"
+    else:
+        source = "none"
+    return jsonify({"has_key": bool(player_key or server_key), "source": source})
 
 
 @app.route("/api/state", methods=["GET"])

@@ -104,11 +104,98 @@
   <span class="sys-small warn-text">警告：不要在聊天中透露你的真实姓名。</span>
 </div>
 
+<!-- AI 模式配置（Y2K 终端风格） -->
+<div class="ai-config-box" id="ai-config-box">
+  <div class="ai-config-header" onclick="toggleAiConfig(this)">
+    <span class="sys-label">[系统]</span>
+    AI 模式：<span id="ai-mode-display">检测中……</span>
+    <span class="ai-config-toggle">▶ 展开设置</span>
+  </div>
+  <div id="ai-config-body" style="display:none;">
+    <p class="ai-config-hint">
+      填写 DeepSeek API Key 可启用真实 AI 对话。不填则使用内置回复。<br>
+      Key 仅保存在当前会话中，关闭浏览器即失效，不会上传到服务器存储。
+    </p>
+    <div class="ai-config-row">
+      <input type="password" id="api-key-input" class="ai-key-input"
+             placeholder="sk-xxxxxxxxxxxxxxxx" autocomplete="off" maxlength="128"
+             onkeydown="if(event.key==='Enter') saveApiKey()">
+      <button class="win98-btn" onclick="saveApiKey()">保存</button>
+      <button class="win98-btn" onclick="clearApiKey()">清除</button>
+    </div>
+    <div id="api-key-feedback" class="ai-config-feedback"></div>
+    <p class="ai-config-link">
+      没有 Key？前往
+      <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">
+        platform.deepseek.com
+      </a>
+      注册（按量计费，价格极低）
+    </p>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 <script>
   const CHARACTERS = {{ characters | tojson }};
+
+  // ── AI 模式配置面板 ──────────────────────────────────────
+  (function checkAiStatus() {
+    fetch('/api/apikey_status').then(r => r.json()).then(data => {
+      updateAiDisplay(data.source);
+    }).catch(() => {});
+  })();
+
+  function updateAiDisplay(source) {
+    const el = document.getElementById('ai-mode-display');
+    if (source === 'player') {
+      el.textContent = '✓ AI（你的 Key）';
+      el.style.color = '#00aa00';
+    } else if (source === 'server') {
+      el.textContent = '✓ AI（服务器提供）';
+      el.style.color = '#00aa00';
+    } else {
+      el.textContent = '内置回复模式';
+      el.style.color = '#ffaa00';
+    }
+  }
+
+  function toggleAiConfig(header) {
+    const body = document.getElementById('ai-config-body');
+    const toggle = header.querySelector('.ai-config-toggle');
+    const open = body.style.display === 'none';
+    body.style.display = open ? 'block' : 'none';
+    toggle.textContent = open ? '▼ 收起' : '▶ 展开设置';
+  }
+
+  function saveApiKey() {
+    const key = document.getElementById('api-key-input').value.trim();
+    const feedback = document.getElementById('api-key-feedback');
+    feedback.textContent = '保存中……';
+    fetch('/api/set_apikey', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({apikey: key})
+    }).then(r => r.json()).then(data => {
+      updateAiDisplay(data.source);
+      if (key) {
+        feedback.textContent = '✓ Key 已保存，AI 模式已启用。';
+        feedback.style.color = '#00aa00';
+        document.getElementById('api-key-input').value = '';
+      } else {
+        feedback.textContent = '已清除，恢复内置回复模式。';
+        feedback.style.color = '#ffaa00';
+      }
+    }).catch(() => {
+      feedback.textContent = '保存失败，请重试。';
+      feedback.style.color = '#ff4444';
+    });
+  }
+
+  function clearApiKey() {
+    document.getElementById('api-key-input').value = '';
+    saveApiKey();
+  }
 </script>
 {% endblock %}
